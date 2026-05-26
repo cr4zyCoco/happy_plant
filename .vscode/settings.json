@@ -3,16 +3,17 @@
   "idf.openOcdConfigs": [
     "board/esp32c3-builtin.cfg"
   ],
-  "idf.currentSetup": "C:\\esp\\v5.5.3\\esp-idf",
+  "idf.currentSetup": "/Users/nori/.espressif/v6.0.1/esp-idf",
   "idf.customExtraVars": {
     "IDF_TARGET": "esp32c3"
   },
-  "clangd.path": "C:\\Espressif\\tools\\esp-clang\\esp-19.1.2_20250312\\esp-clang\\bin\\clangd.exe",
+  "clangd.path": "/Users/nori/.espressif/tools/esp-clang/esp-20.1.1_20250829/esp-clang/bin/clangd",
   "clangd.arguments": [
     "--background-index",
     "--query-driver=**",
-    "--compile-commands-dir=d:\\Projekte\\embeddedsystems\\dices\\build"
+    "--compile-commands-dir=/Users/nori/happy_plant/build"
   ],
-  "idf.flashType": "UART",
-  "idf.portWin": "COM4"
+  "idf.flashType": "JTAG",
+  "idf.portWin": "COM4",
+  "idf.port": "/dev/tty.usbmodem101"
 }
