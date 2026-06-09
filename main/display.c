@@ -10,6 +10,58 @@
 // OLED 128x64 = 1024 Bytes Buffer
 static uint8_t buffer[128 * 8];
 
+void draw_line_h(int x, int y, int length)
+{
+    for (int i = 0; i < length; i++)
+    {
+        draw_pixel(x + i, y);
+    }
+}
+
+void draw_line_v(int x, int y, int length)
+{
+    for (int i = 0; i < length; i++)
+    {
+        draw_pixel(x, y + i);
+    }
+}
+
+void draw_line_diagonal_r(int x, int y, int length)
+{
+    for (int i = 0; i < length; i++)
+    {
+        draw_pixel(x+i, y + i);
+    }
+}
+
+void draw_line_diagonal_l(int x, int y, int length)
+{
+    for (int i = 0; i < length; i++)
+    {
+        draw_pixel(x-i, y + i);
+    }
+}
+
+void draw_rect(int x, int y, int w, int h)
+{
+    draw_line_h(x, y, w);
+    draw_line_h(x, y + h, w);
+
+    draw_line_v(x, y, h);
+    draw_line_v(x + w, y, h);
+}
+
+void fill_rect(int x, int y, int w, int h)
+{
+    for (int iy = 0; iy < h; iy++)
+    {
+        for (int ix = 0; ix < w; ix++)
+        {
+            draw_pixel(x + ix, y + iy);
+        }
+    }
+}
+
 
 // -------------------------
 // Low-Level I2C Command
@@ -21,6 +73,8 @@ static void ssd1306_send_cmd(uint8_t cmd)
                                data, 2,
                                1000 / portTICK_PERIOD_MS);
 }
+
+
 
 
 // -------------------------
@@ -81,6 +135,8 @@ void display_clear(void)
 {
     memset(buffer, 0, sizeof(buffer));
 }
+
+
 
 
 // -------------------------

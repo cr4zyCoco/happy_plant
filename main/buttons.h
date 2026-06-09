@@ -1,10 +1,16 @@
-#ifndef BUTTONS_H
-#define BUTTONS_H
+#pragma once
 
 #include <stdbool.h>
 
-void buttons_init(void);
-bool button_left_pressed(void);
-bool button_right_pressed(void);
+typedef enum
+{
+    BUTTON_NONE,
+    BUTTON_CLICK,
+    BUTTON_LONG_PRESS
+} button_event_t;
 
-#endif
+void buttons_init(void);
+
+bool button_pressed(void);
+
+button_event_t button_event(void);
