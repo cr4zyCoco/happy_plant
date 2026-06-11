@@ -3,12 +3,15 @@
 #include "display.h"
 #include "pet_game.h"
 #include "play_game.h"
+#include "thoughts.h"
 
 typedef enum
 {
     ACTION_PET,
     ACTION_PLAY,
     ACTION_THOUGHT,
+    ACTION_MODE,
+    ACTION_EXIT,
     ACTION_COUNT
 } action_t;
 
@@ -46,22 +49,64 @@ static void draw_icon_bubble(int x, int y)
     draw_pixel(x + 12, y + 5);
 }
 
+static void draw_icon_mode(int x, int y)
+{
+    // kleiner Topf
+    draw_rect(x + 4, y + 10, 10, 8);
+
+    // Blume
+    draw_line_v(x + 9, y + 4, 8);
+    draw_pixel(x + 8, y + 3);
+    draw_pixel(x + 10, y + 3);
+    draw_pixel(x + 7, y + 4);
+    draw_pixel(x + 11, y + 4);
+}
+
+static void draw_x(int x, int y)
+{
+    draw_line_diagonal_r(x, y, 14);
+    draw_line_diagonal_l(x + 14, y, 14);
+}
+
+
 static void draw_menu(void)
 {
     display_clear();
 
-    draw_icon_heart(20, 24);
-    draw_icon_play(58, 24);
-    draw_icon_bubble(96, 24);
+    // Reihe 1
+    draw_icon_heart(20, 10);
+    draw_icon_play(58, 10);
+    draw_icon_bubble(96, 10);
+
+    // Reihe 2
+    draw_icon_mode(38, 42);
+    draw_x(78, 42);
 
     int frame_x = 14;
+    int frame_y = 6;
 
     if (selected_action == ACTION_PLAY)
+    {
         frame_x = 54;
+        frame_y = 6;
+    }
     else if (selected_action == ACTION_THOUGHT)
+    {
         frame_x = 92;
+        frame_y = 6;
+    }
+    else if (selected_action == ACTION_MODE)
+    {
+        frame_x = 32;
+        frame_y = 38;
+    }
+    else if (selected_action == ACTION_EXIT)
+    {
+        frame_x = 72;
+        frame_y = 38;
+    }
 
-    draw_rect(frame_x, 20, 24, 24);
+    draw_rect(frame_x, frame_y, 24, 24);
 
     display_update();
 }
@@ -72,35 +117,37 @@ static void execute_action(plant_t *plant)
     {
         case ACTION_PET:
             pet_game_start();
+            menu_open = false;
+            result_ticks = 0;
             break;
-
-            
 
         case ACTION_PLAY:
             play_game_start();
+            menu_open = false;
+            result_ticks = 0;
             break;
 
         case ACTION_THOUGHT:
-            if (plant->water < 30)
-                plant->state = PLANT_THIRSTY;
-            else if (plant->happiness > 80)
-                plant->state = PLANT_LOVELY;
-            else
-                plant->state = PLANT_HAPPY;
+            thoughts_start(plant);
+            menu_open = false;
+            result_ticks = 0;
+            break;
+
+        case ACTION_MODE:
+            plant_toggle_mode(plant);
+            menu_open = false;
+            result_ticks = 10;
+            break;
+
+        case ACTION_EXIT:
+            menu_open = false;
+            result_ticks = 0;
             break;
 
         default:
             break;
     }
-
-    if (plant->happiness > 100) plant->happiness = 100;
-    if (plant->energy > 100) plant->energy = 100;
-    if (plant->energy < 0) plant->energy = 0;
-
-    result_ticks = 30;
-    menu_open = false;
 }
-
 void interaction_init(void)
 {
     menu_open = false;

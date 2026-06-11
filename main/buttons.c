@@ -4,7 +4,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define BUTTON GPIO_NUM_2
+#define BUTTON GPIO_NUM_1
 
 static bool last_state = false;
 static TickType_t press_start = 0;

@@ -4,12 +4,29 @@
 #include "light_sensor.h"
 #include "plant_faces.h"
 
+void plant_toggle_mode(plant_t *plant)
+{
+    if (plant->mode == PLANT_MODE_FLOWER)
+    {
+        plant->mode = PLANT_MODE_CACTUS;
+    }
+    else
+    {
+        plant->mode = PLANT_MODE_FLOWER;
+    }
+}
+
 void plant_init(plant_t *plant)
 {
-    plant->water = 25;
-    plant->happiness = 50;
-    plant->energy = 70;
+    plant->water = 100;
+    plant->happiness = 100;
+    plant->energy = 100;
+
     plant->state = PLANT_HAPPY;
+    plant->need = NEED_NONE;
+    plant->age_days = 0;
+    plant->death_recorded = false;
+    plant->death_day = 0;
 }
 
 static void plant_limit_values(plant_t *plant)
@@ -43,46 +60,71 @@ void plant_draw(plant_state_t state)
 
 void plant_update(plant_t *plant)
 {
-    //float distance = ultrasonic_get_distance_cm();
-    int is_dark = light_sensor_is_dark();
-    float distance = 5;
-
+    float distance = 12;//ultrasonic_get_distance_cm();
+    int is_dark = 0;//light_sensor_is_dark();
 
     if (distance < 0)
     {
         plant->state = PLANT_SAD;
+        plant->need = NEED_CRITICAL;
         return;
     }
 
-    if (is_dark)
-    {
-        plant->energy -= 1;
-    }
+    if (distance >= 12)
+        plant->water = 0;
+    else if (distance > 10)
+        plant->water = 20;
+    else if (distance > 6)
+        plant->water = 50;
     else
+        plant->water = 100;
+
+    
+    if (plant->water <= 0)
+{
+    plant->state = PLANT_DEAD;
+    plant->need = NEED_WATER;
+
+    if (!plant->death_recorded)
     {
-        plant->energy += 1;
+        plant->death_recorded = true;
+        plant->death_day = plant->age_days;
     }
 
-    plant_limit_values(plant);
+    return;
+}
+
+    if (is_dark)
+        plant->energy -= 1;
+    else
+        plant->energy += 1;
+
+    if (plant->energy > 100) plant->energy = 100;
+    if (plant->energy < 0) plant->energy = 0;
 
     if (plant->water <= 0)
     {
         plant->state = PLANT_DEAD;
+        plant->need = NEED_WATER;
     }
-    else if (plant->water < 30 && plant->happiness < 60)
-    {
-        plant->state = PLANT_JUDGE;
-    }
-    else if (plant->water < 60)
+    else if (plant->water < 40)
     {
         plant->state = PLANT_THIRSTY;
+        plant->need = NEED_WATER;
     }
-    else if (plant->energy < 30 && plant->happiness < 70)
+    else if (plant->energy < 40)
     {
         plant->state = PLANT_SAD;
+        plant->need = NEED_LIGHT;
+    }
+    else if (plant->happiness < 40)
+    {
+        plant->state = PLANT_JUDGE;
+        plant->need = NEED_HAPPINESS;
     }
     else
     {
         plant->state = PLANT_HAPPY;
+        plant->need = NEED_NONE;
     }
 }

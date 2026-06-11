@@ -3,8 +3,8 @@
 #include "esp_rom_sys.h"
 #include "driver/gpio.h"
 
-#define TRIG_PIN GPIO_NUM_9
-#define ECHO_PIN GPIO_NUM_2
+#define TRIG_PIN GPIO_NUM_5
+#define ECHO_PIN GPIO_NUM_6
 
 static gpio_num_t trig = TRIG_PIN;
 static gpio_num_t echo = ECHO_PIN;

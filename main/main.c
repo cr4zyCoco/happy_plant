@@ -12,10 +12,9 @@
 #include "interaction.h"
 #include "pet_game.h"
 #include "play_game.h"
+#include "thoughts.h"
 
 plant_t plant;
-
-
 
 void app_main(void)
 {
@@ -26,7 +25,7 @@ void app_main(void)
     interaction_init();
     light_sensor_init();
     plant_init(&plant);
-
+    
     while (1)
 {
     if (pet_game_is_active())
@@ -36,6 +35,10 @@ void app_main(void)
     else if (play_game_is_active())
     {
         play_game_update(&plant);
+    }
+    else if (thoughts_is_active())
+    {
+        thoughts_update(&plant);
     }
     else
     {
@@ -49,5 +52,5 @@ void app_main(void)
     }
 
     vTaskDelay(pdMS_TO_TICKS(50));
-} 
+}
 }
