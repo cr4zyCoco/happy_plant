@@ -235,7 +235,7 @@ void pet_game_update(plant_t *plant)
 
         if (hits >= REQUIRED_HITS)
         {
-            plant_add_happiness(plant, 20);
+            plant_add_happiness(plant, 50);
 
             if (plant->happiness > 100)
             {

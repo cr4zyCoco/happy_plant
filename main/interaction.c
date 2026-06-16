@@ -4,13 +4,14 @@
 #include "pet_game.h"
 #include "play_game.h"
 #include "thoughts.h"
+#include "status_screen.h"
 
 typedef enum
 {
     ACTION_PET,
     ACTION_PLAY,
     ACTION_THOUGHT,
-    ACTION_MODE,
+    ACTION_STATUS,
     ACTION_EXIT,
     ACTION_COUNT
 } action_t;
@@ -49,7 +50,7 @@ static void draw_icon_bubble(int x, int y)
     draw_pixel(x + 12, y + 5);
 }
 
-static void draw_icon_mode(int x, int y)
+static void draw_icon_status(int x, int y)
 {
     // kleiner Topf
     draw_rect(x + 4, y + 10, 10, 8);
@@ -79,7 +80,7 @@ static void draw_menu(void)
     draw_icon_bubble(96, 10);
 
     // Reihe 2
-    draw_icon_mode(38, 42);
+    draw_icon_status(38, 42);
     draw_x(78, 42);
 
     int frame_x = 14;
@@ -95,7 +96,7 @@ static void draw_menu(void)
         frame_x = 92;
         frame_y = 6;
     }
-    else if (selected_action == ACTION_MODE)
+    else if (selected_action == ACTION_STATUS)
     {
         frame_x = 32;
         frame_y = 38;
@@ -133,10 +134,10 @@ static void execute_action(plant_t *plant)
             result_ticks = 0;
             break;
 
-        case ACTION_MODE:
-            plant_toggle_mode(plant);
+        case ACTION_STATUS:
+            status_screen_start();
             menu_open = false;
-            result_ticks = 10;
+            result_ticks = 0;
             break;
 
         case ACTION_EXIT:

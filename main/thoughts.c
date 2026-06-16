@@ -3,14 +3,7 @@
 #include "buttons.h"
 #include "esp_random.h"
 
-typedef enum
-{
-    THOUGHT_ICON,
-    THOUGHT_TEXT
-} thought_screen_t;
-
 static bool active = false;
-static thought_screen_t screen = THOUGHT_ICON;
 static const char *current_text = "";
 
 /* ---------- 3x5 Font, skaliert ---------- */
@@ -102,70 +95,6 @@ static void draw_text_big(int x, int y, const char *text)
     }
 }
 
-/* ---------- Icons ---------- */
-
-static void draw_icon_water(void)
-{
-    fill_rect(61, 22, 6, 12);
-    draw_line_diagonal_l(64, 14, 7);
-    draw_line_diagonal_r(63, 14, 7);
-}
-
-static void draw_icon_sun(void)
-{
-    draw_rect(58, 25, 12, 12);
-    draw_line_h(52, 31, 5);
-    draw_line_h(71, 31, 5);
-    draw_line_v(64, 17, 6);
-    draw_line_v(64, 39, 6);
-    draw_pixel(55, 22);
-    draw_pixel(73, 22);
-    draw_pixel(55, 40);
-    draw_pixel(73, 40);
-}
-
-static void draw_icon_heart(void)
-{
-    fill_rect(55, 23, 8, 8);
-    fill_rect(66, 23, 8, 8);
-    fill_rect(57, 31, 15, 6);
-    fill_rect(60, 37, 9, 5);
-    fill_rect(63, 42, 3, 3);
-}
-
-static void draw_icon_bubble(void)
-{
-    draw_rect(36, 16, 56, 28);
-    draw_pixel(50, 45);
-    draw_pixel(48, 47);
-
-    draw_pixel(52, 30);
-    draw_pixel(64, 30);
-    draw_pixel(76, 30);
-}
-
-static void draw_icon_clipboard(void)
-{
-    draw_rect(46, 14, 36, 36);
-    draw_rect(56, 10, 16, 8);
-
-    draw_line_h(52, 26, 20);
-    draw_line_h(52, 34, 20);
-    draw_line_h(52, 42, 14);
-
-    draw_text_big(54, 26, "2");
-    draw_text_big(68, 26, "5");
-}
-
-static void draw_icon_grave(void)
-{
-    draw_rect(50, 18, 28, 32);
-    draw_line_h(46, 50, 36);
-
-    draw_line_v(64, 26, 14);
-    draw_line_h(58, 32, 12);
-}
-
 /* ---------- Texte ---------- */
 
 static const char *water_texts[] =
@@ -184,15 +113,15 @@ static const char *light_texts[] =
 
 static const char *happiness_texts[] =
 {
-    "DAS EINZIGE WAS \nNOCH BESSER WÄRE,\nS WÄRE MICH ZU STREICHELN.",
-    "HALLO?\nICH BIN HIER.",
-    "STREICHELN\nERWUENSCHT."
+    "ETWAS LIEBE\nWAERE NETT.",
+    "HALLO!\nWIE GEHT ES DIR?",
+    "STREICHELN\nERWUENSCHT"
 };
 
 static const char *critical_texts[] =
 {
     "SENSOR SAGT\nNEIN.",
-    "ICH WEIGERE\nMICH ZU REDEN",
+    "ICH WEIGERE\nMICH ZU REDEN.",
     "DU HAST DAS\nNICHT IM GRIFF."
 };
 
@@ -201,7 +130,7 @@ static const char *judge_texts[] =
     "INTERESSANTE\nPFLEGE.",
     "ICH BEOBACHTE\nDICH.",
     "2 VON 5\nBLAETTERN.",
-    "NOTIZEN\nWURDEN GEMACHT."
+    "FUEHLE DICH\nBEOBACHTET"
 };
 
 static const char *lovely_texts[] =
@@ -227,7 +156,7 @@ static const char *fun_texts[] =
 
 static const char *dead_texts[] =
 {
-    "RIP.\nSEHR UNNOETIG.",
+    "RIP.\nDANK SCHLECHTER \nPFLEGE",
     "ICH WAR\nNOCH SO JUNG.",
     "DIE GIESSKANNE\nWAR DIREKT DA.",
     "TODESURSACHE:\nMANAGEMENT."
@@ -240,38 +169,32 @@ static const char *pick_random(const char **list, int count)
 
 static const char *pick_text(plant_t *plant)
 {
-    if (plant->state == PLANT_DEAD)
-        return pick_random(dead_texts, 4);
-
-    switch (plant->need)
+    switch (plant->state)
     {
-        case NEED_WATER:
-            return pick_random(water_texts, 3);
+        case PLANT_DEAD:
+            return pick_random(dead_texts, 4);
 
-        case NEED_LIGHT:
+        case PLANT_JUDGE:
+            return pick_random(judge_texts, 4);
+
+        case PLANT_THIRSTY:
+            return pick_random(happy_texts, 3);
+
+        case PLANT_SAD:
             return pick_random(light_texts, 3);
 
-        case NEED_HAPPINESS:
-            return pick_random(happiness_texts, 3);
+        case PLANT_LOVELY:
+            return pick_random(lovely_texts, 3);
 
-        case NEED_CRITICAL:
-            return pick_random(critical_texts, 3);
-
-        case NEED_NONE:
+        case PLANT_HAPPY:
         default:
-            break;
+            if ((esp_random() % 4) == 0)
+            {
+                return pick_random(fun_texts, 3);
+            }
+
+            return pick_random(happiness_texts, 3);
     }
-
-    if (plant->state == PLANT_JUDGE)
-        return pick_random(judge_texts, 4);
-
-    if (plant->state == PLANT_LOVELY)
-        return pick_random(lovely_texts, 3);
-
-    if ((esp_random() % 4) == 0)
-        return pick_random(fun_texts, 3);
-
-    return pick_random(happy_texts, 3);
 }
 
 /* ---------- Public ---------- */
@@ -279,7 +202,6 @@ static const char *pick_text(plant_t *plant)
 void thoughts_start(plant_t *plant)
 {
     active = true;
-    screen = THOUGHT_ICON;
     current_text = pick_text(plant);
 }
 
@@ -290,61 +212,17 @@ bool thoughts_is_active(void)
 
 void thoughts_update(plant_t *plant)
 {
-    if (button_event() == BUTTON_CLICK)
+    (void)plant;
+
+    button_event_t event = button_event();
+
+    if (event == BUTTON_CLICK || event == BUTTON_LONG_PRESS)
     {
-        if (screen == THOUGHT_ICON)
-        {
-            screen = THOUGHT_TEXT;
-        }
-        else
-        {
-            active = false;
-            return;
-        }
+        active = false;
+        return;
     }
 
     display_clear();
-    
-
-    if (screen == THOUGHT_ICON)
-    {
-
-        if (plant->state == PLANT_DEAD)
-                    draw_icon_grave();
-
-        switch (plant->need)
-        {
-            case NEED_WATER:
-                draw_icon_water();
-                break;
-
-            case NEED_LIGHT:
-                draw_icon_sun();
-                break;
-
-            case NEED_HAPPINESS:
-                draw_icon_heart();
-                break;
-
-            case NEED_CRITICAL:
-                draw_icon_clipboard();
-                break;
-
-            case NEED_NONE:
-            default:
-                if (plant->state == PLANT_JUDGE)
-                    draw_icon_clipboard();
-                else if (plant->state == PLANT_LOVELY)
-                    draw_icon_heart();
-                else
-                    draw_icon_bubble();
-                break;
-        }
-    }
-    else
-    {
-        draw_text_big(4, 18, current_text);
-    }
-
+    draw_text_big(4, 18, current_text);
     display_update();
 }

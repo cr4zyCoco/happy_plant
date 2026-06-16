@@ -38,7 +38,7 @@ button_event_t button_event(void)
 
         last_state = current;
 
-        if (duration >= pdMS_TO_TICKS(1000))
+        if (duration >= pdMS_TO_TICKS(700))
         {
             return BUTTON_LONG_PRESS;
         }

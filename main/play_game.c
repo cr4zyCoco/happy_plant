@@ -20,7 +20,7 @@ static bool active = false;
 static bool game_over = false;
 
 static int heart_y = GROUND_Y;
-static int heart_velocity = 0;
+static int heart_velocity = 1;
 
 static int obstacle_x = OBSTACLE_START_X;
 static int obstacle_y = GROUND_Y;

@@ -36,6 +36,7 @@ typedef struct
     int age_days;
     bool death_recorded;
     int death_day;
+    int sun_minutes_today;
 
     plant_mode_t mode;
     plant_state_t state;
@@ -49,5 +50,6 @@ void plant_draw(plant_state_t state);
 void plant_draw(plant_state_t state);
 void plant_add_happiness(plant_t *plant, int amount);
 void plant_toggle_mode(plant_t *plant);
+
 
 #endif
