@@ -75,6 +75,8 @@ Der Pflanzentopf wurde mit PLA 3D-Gedruckt und zusätzlich mit Acryllack innen a
 Er ist doppelwandig und verfügt daher über einen Wassertank, der mit Hilfe des Ultraschallsensors überwacht wird.
 Das Display ist auf der Vorderseite eingelassen.
 Der Knopf befindet sich unter dem Display am Boden.
+Im Boden selbst befindet sich der Microcontroller. Als Stromquelle wurde in diesem Fall eine Batterie mit im Boden verbaut.
+Somit ist alles im Topf verstaut und kann ohne Probleme transportiert werden.
 
 ![Aufbau innen](cut.png)
 
