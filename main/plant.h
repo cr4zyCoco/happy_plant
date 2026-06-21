@@ -2,14 +2,12 @@
 #ifndef PLANT_H
 #define PLANT_H
 
-typedef enum
-{
+typedef enum{
     PLANT_MODE_FLOWER,
     PLANT_MODE_CACTUS
 } plant_mode_t;
 
-typedef enum
-{
+typedef enum{
     PLANT_HAPPY,
     PLANT_LOVELY,
     PLANT_SAD,
@@ -18,8 +16,7 @@ typedef enum
     PLANT_DEAD
 } plant_state_t;
 
-typedef enum
-{
+typedef enum{
     NEED_NONE,
     NEED_WATER,
     NEED_LIGHT,
@@ -27,8 +24,7 @@ typedef enum
     NEED_CRITICAL
 } plant_need_t;
 
-typedef struct
-{
+typedef struct{
     int water;
     int happiness;
     int energy;
@@ -45,11 +41,8 @@ typedef struct
 
 void plant_init(plant_t *plant);
 void plant_update(plant_t *plant);
-void plant_water(plant_t *plant);
 void plant_draw(plant_state_t state);
 void plant_draw(plant_state_t state);
 void plant_add_happiness(plant_t *plant, int amount);
-void plant_toggle_mode(plant_t *plant);
-
 
 #endif

@@ -3,7 +3,8 @@
 
 #define LIGHT_ADC_CHANNEL ADC1_CHANNEL_3   // GPIO2
 #define DARK_THRESHOLD   3000
-#
+
+// -- aus Internetrecherche entnommen --
 
 void light_sensor_init(void)
 {

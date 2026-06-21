@@ -2,6 +2,8 @@
 
 #include <stdbool.h>
 
+// -- aus Projekt aus Übungsstunden entnommen --
+
 typedef enum
 {
     BUTTON_NONE,

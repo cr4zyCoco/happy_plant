@@ -4,10 +4,11 @@
 #include "ultrasonic.h"
 #include "light_sensor.h"
 
+//Buchstaben zur Ausgabe von Text bzw. Zahlen mit Hilfe von KI erstellt
+
 static bool active = false;
 
-static void draw_digit_small(int x, int y, int value)
-{
+static void draw_digit_small(int x, int y, int value){
     const int seg[10][7] =
     {
         {1,1,1,1,1,1,0},
@@ -47,10 +48,8 @@ static void draw_number(int x, int y, int value)
 
     int started = 0;
 
-    for (int i = 0; i < 4; i++)
-    {
-        if (digits[i] != 0 || started || i == 3)
-        {
+    for (int i = 0; i < 4; i++){
+        if (digits[i] != 0 || started || i == 3){
             draw_digit_small(x, y, digits[i]);
             x += 10;
             started = 1;
@@ -58,42 +57,34 @@ static void draw_number(int x, int y, int value)
     }
 }
 
-static void draw_label_d(int x, int y)
-{
+static void draw_label_d(int x, int y){
     draw_rect(x, y, 7, 10);
     draw_line_v(x + 7, y + 2, 6);
 }
 
-static void draw_label_l(int x, int y)
-{
+static void draw_label_l(int x, int y){
     draw_line_v(x, y, 10);
     draw_line_h(x, y + 10, 7);
 }
 
-static void draw_label_h(int x, int y)
-{
+static void draw_label_h(int x, int y){
     draw_line_v(x, y, 10);
     draw_line_v(x + 7, y, 10);
     draw_line_h(x, y + 5, 7);
 }
 
-void status_screen_start(void)
-{
+void status_screen_start(void){
     active = true;
 }
 
-bool status_screen_is_active(void)
-{
+bool status_screen_is_active(void){
     return active;
 }
 
-void status_screen_update(plant_t *plant)
-
-{   
+void status_screen_update(plant_t *plant){   
     button_event_t event = button_event();
 
-    if (event == BUTTON_CLICK || event == BUTTON_LONG_PRESS)
-    {
+    if (event == BUTTON_CLICK || event == BUTTON_LONG_PRESS){
         active = false;
         return;
     }

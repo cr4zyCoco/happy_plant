@@ -1,6 +1,8 @@
 #include "driver/i2c.h"
 #include "esp_log.h"
 
+// -- aus Internetrecherche entnommen --
+
 #define I2C_PORT I2C_NUM_0
 
 #define I2C_SDA 8

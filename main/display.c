@@ -4,6 +4,8 @@
 #include "freertos/task.h"
 #include <string.h>
 
+// -- aus Internetrecherche entnommen --
+
 #define I2C_PORT I2C_NUM_0
 #define OLED_ADDR 0x3C
 

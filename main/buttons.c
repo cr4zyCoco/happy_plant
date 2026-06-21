@@ -4,6 +4,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+// -- aus Projekt aus Übungsstunden entnommen --
+
 #define BUTTON GPIO_NUM_1
 
 static bool last_state = false;

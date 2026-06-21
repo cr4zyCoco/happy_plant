@@ -6,7 +6,7 @@
 #include "esp_timer.h"
 #include "plant_clock.h"
 
-/* ---------- Einstellbare Max-/Grenzwerte ---------- */
+//Variablen zur leichteren Anpassung
 
 #define WATER_DISTANCE_FULL_CM      3.0f
 #define WATER_DISTANCE_LOW_CM       5.0f
@@ -20,15 +20,9 @@
 #define HAPPINESS_SAD               40
 #define HAPPINESS_JUDGE             20
 
-void plant_toggle_mode(plant_t *plant)
-{
-    // Platzhalter, bis Blume/Kaktus-Profile fertig sind
-}
+//Grenzwerte nicht überschreiten
 
-/* ---------- Hilfsfunktionen ---------- */
-
-static void plant_limit_values(plant_t *plant)
-{
+static void plant_limit_values(plant_t *plant){
     if (plant->water > 100) plant->water = 100;
     if (plant->water < 0) plant->water = 0;
 
@@ -39,31 +33,22 @@ static void plant_limit_values(plant_t *plant)
     if (plant->energy < 0) plant->energy = 0;
 }
 
-static void plant_update_water_from_distance(plant_t *plant, float distance_cm)
-{
-    if (distance_cm <= WATER_DISTANCE_FULL_CM)
-    {
+static void plant_update_water_from_distance(plant_t *plant, float distance_cm){
+    if (distance_cm <= WATER_DISTANCE_FULL_CM){
         plant->water = 100;
     }
-    else if (distance_cm <= WATER_DISTANCE_LOW_CM)
-    {
+    else if (distance_cm <= WATER_DISTANCE_LOW_CM){
         plant->water = 40;
     }
-    else if (distance_cm <= WATER_DISTANCE_CRITICAL_CM)
-    {
+    else if (distance_cm <= WATER_DISTANCE_CRITICAL_CM){
         plant->water = 20;
     }
-    else
-    {
+    else{
         plant->water = 0;
     }
 }
 
-
-/* ---------- Public Functions ---------- */
-
-void plant_init(plant_t *plant)
-{
+void plant_init(plant_t *plant){
     plant->water = 100;
     plant->happiness = 70;
     plant->energy = 100;
@@ -74,31 +59,19 @@ void plant_init(plant_t *plant)
     plant->need = NEED_NONE;
 }
 
-void plant_add_happiness(plant_t *plant, int amount)
-{
+void plant_add_happiness(plant_t *plant, int amount){
     plant->happiness += amount;
     plant_limit_values(plant);
 }
 
-void plant_water(plant_t *plant)
-{
-    plant->water += 20;
-    plant_limit_values(plant);
-}
-
-void plant_draw(plant_state_t state)
-{
+void plant_draw(plant_state_t state){
     plant_faces_draw(state);
 }
 
-
-
-void plant_update(plant_t *plant)
-{
+void plant_update(plant_t *plant){
     float distance = ultrasonic_get_distance_cm();
 
-    if (distance < 0)
-    {
+    if (distance < 0) { //wenn kein Wasser vorhanden: TOT
         plant->state = PLANT_SAD;
         return;
     }
@@ -112,13 +85,11 @@ void plant_update(plant_t *plant)
     bool enough_light = false;
     bool dark_enough = false;
 
-    if (is_day)
-    {
+    if (is_day){
         // Tagsüber: kleiner Wert = hell
         enough_light = (light_raw < DAY_LIGHT_THRESHOLD);
     }
-    else
-    {
+    else {
         // Nachts: großer Wert = dunkel
         dark_enough = (light_raw > NIGHT_DARK_THRESHOLD);
     }
@@ -130,62 +101,50 @@ void plant_update(plant_t *plant)
        3. Zufriedenheit
     */
 
-    // Wasser entscheidet zuerst
-
-    if (plant->water <= 0)
-    {
+    // Wasser 
+    if (plant->water <= 0){
         plant->state = PLANT_DEAD;
         return;
     }
 
-    if (plant->water <= 20)
-    {
+    if (plant->water <= 20){
         plant->state = PLANT_JUDGE;
         return;
     }
 
-    if (plant->water <= 40)
-    {
+    if (plant->water <= 40){
         plant->state = PLANT_THIRSTY;
         return;
     }
 
-    // Licht entscheidet danach
-
-    if (is_day && !enough_light)
-    {
+    // Licht
+    if (is_day && !enough_light){
         plant->state = PLANT_SAD;
         return;
     }
 
-    if (!is_day && !dark_enough)
-    {
+    if (!is_day && !dark_enough){
         plant->state = PLANT_JUDGE;
         return;
     }
 
-    // Zufriedenheit entscheidet zuletzt
-
-    if (plant->happiness < HAPPINESS_JUDGE)
-    {
+    // Zufriedenheit
+    if (plant->happiness < HAPPINESS_JUDGE){
         plant->state = PLANT_JUDGE;
         return;
     }
 
-    if (plant->happiness < HAPPINESS_SAD)
-    {
+    if (plant->happiness < HAPPINESS_SAD){
         plant->state = PLANT_SAD;
         return;
     }
 
-    if (plant->happiness >= HAPPINESS_LOVELY)
-    {
+    if (plant->happiness >= HAPPINESS_LOVELY){
         plant->state = PLANT_LOVELY;
         return;
     }
 
-    if (plant->happiness >= HAPPINESS_HAPPY)
-    {
+    if (plant->happiness >= HAPPINESS_HAPPY){
         plant->state = PLANT_HAPPY;
         return;
     }

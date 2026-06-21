@@ -6,10 +6,10 @@
 static bool active = false;
 static const char *current_text = "";
 
+//Font mit Hilfe von KI erstellt
 /* ---------- 3x5 Font, skaliert ---------- */
 
-static const uint8_t *font_rows(char c)
-{
+static const uint8_t *font_rows(char c){
     static const uint8_t A[5]={2,5,7,5,5}, B[5]={6,5,6,5,6}, C[5]={3,4,4,4,3};
     static const uint8_t D[5]={6,5,5,5,6}, E[5]={7,4,6,4,7}, F[5]={7,4,6,4,4};
     static const uint8_t G[5]={3,4,5,5,3}, H[5]={5,5,7,5,5}, I[5]={7,2,2,2,7};
@@ -55,16 +55,12 @@ static const uint8_t *font_rows(char c)
     }
 }
 
-static void draw_char_big(int x, int y, char c)
-{
+static void draw_char_big(int x, int y, char c){
     const uint8_t *rows = font_rows(c);
 
-    for (int row = 0; row < 5; row++)
-    {
-        for (int col = 0; col < 3; col++)
-        {
-            if (rows[row] & (1 << (2 - col)))
-            {
+    for (int row = 0; row < 5; row++){
+        for (int col = 0; col < 3; col++){
+            if (rows[row] & (1 << (2 - col))){
                 fill_rect(x + col * 2,
                           y + row * 2,
                           2,
@@ -74,19 +70,15 @@ static void draw_char_big(int x, int y, char c)
     }
 }
 
-static void draw_text_big(int x, int y, const char *text)
-{
+static void draw_text_big(int x, int y, const char *text){
     int start_x = x;
 
-    while (*text)
-    {
-        if (*text == '\n')
-        {
+    while (*text){
+        if (*text == '\n'){
             y += 13;
             x = start_x;
         }
-        else
-        {
+        else{
             draw_char_big(x, y, *text);
             x += 8;
         }
@@ -94,8 +86,6 @@ static void draw_text_big(int x, int y, const char *text)
         text++;
     }
 }
-
-/* ---------- Texte ---------- */
 
 static const char *water_texts[] =
 {
@@ -162,13 +152,11 @@ static const char *dead_texts[] =
     "TODESURSACHE:\nMANAGEMENT."
 };
 
-static const char *pick_random(const char **list, int count)
-{
+static const char *pick_random(const char **list, int count){
     return list[esp_random() % count];
 }
 
-static const char *pick_text(plant_t *plant)
-{
+static const char *pick_text(plant_t *plant){
     switch (plant->state)
     {
         case PLANT_DEAD:
@@ -188,8 +176,7 @@ static const char *pick_text(plant_t *plant)
 
         case PLANT_HAPPY:
         default:
-            if ((esp_random() % 4) == 0)
-            {
+            if ((esp_random() % 4) == 0){
                 return pick_random(fun_texts, 3);
             }
 
@@ -197,27 +184,21 @@ static const char *pick_text(plant_t *plant)
     }
 }
 
-/* ---------- Public ---------- */
-
-void thoughts_start(plant_t *plant)
-{
+void thoughts_start(plant_t *plant){
     active = true;
     current_text = pick_text(plant);
 }
 
-bool thoughts_is_active(void)
-{
+bool thoughts_is_active(void){
     return active;
 }
 
-void thoughts_update(plant_t *plant)
-{
+void thoughts_update(plant_t *plant){
     (void)plant;
 
     button_event_t event = button_event();
 
-    if (event == BUTTON_CLICK || event == BUTTON_LONG_PRESS)
-    {
+    if (event == BUTTON_CLICK || event == BUTTON_LONG_PRESS){
         active = false;
         return;
     }

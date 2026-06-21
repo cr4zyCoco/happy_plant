@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// -- aus Internetrecherche entnommen --
+
 void ssd1306_init(void);
 
 void display_clear(void);

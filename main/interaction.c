@@ -6,6 +6,8 @@
 #include "thoughts.h"
 #include "status_screen.h"
 
+//für die Idee der Logik wurde KI zur Hilfe genommen und für die Icons. 
+
 typedef enum
 {
     ACTION_PET,
@@ -25,11 +27,13 @@ static int result_ticks = 0;
 
 static void draw_icon_heart(int x, int y)
 {
+    //mit Hilfe von KI erstellt:
     fill_rect(x, y + 3, 4, 4);
     fill_rect(x + 6, y + 3, 4, 4);
     fill_rect(x + 2, y + 6, 8, 4);
     fill_rect(x + 3, y + 10, 6, 3);
     fill_rect(x + 5, y + 13, 2, 2);
+    
 }
 
 static void draw_icon_play(int x, int y)
@@ -41,6 +45,7 @@ static void draw_icon_play(int x, int y)
 
 static void draw_icon_bubble(int x, int y)
 {
+    //mit Hilfe von KI erstellt:
     draw_rect(x, y, 16, 10);
     draw_pixel(x + 4, y + 11);
     draw_pixel(x + 3, y + 12);
@@ -52,6 +57,7 @@ static void draw_icon_bubble(int x, int y)
 
 static void draw_icon_status(int x, int y)
 {
+    //mit Hilfe von KI erstellt:
     // kleiner Topf
     draw_rect(x + 4, y + 10, 10, 8);
 
@@ -108,7 +114,6 @@ static void draw_menu(void)
     }
 
     draw_rect(frame_x, frame_y, 24, 24);
-
     display_update();
 }
 

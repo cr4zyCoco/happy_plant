@@ -1,9 +1,9 @@
 #include "plant_clock.h"
-
 #include "buttons.h"
 #include "display.h"
-
 #include "esp_timer.h"
+
+//Zahlencode für die 7-Segmentanzeige mit Hilfe von KI erstellt 
 
 static bool clock_set = false;
 
@@ -19,8 +19,7 @@ static int digit_m1  = 0;
 
 static int64_t last_update_us = 0;
 
-static void draw_segment_digit(int x, int y, int value)
-{
+static void draw_segment_digit(int x, int y, int value){
     const int segments[10][7] =
     {
         {1,1,1,1,1,1,0}, // 0
@@ -48,8 +47,7 @@ static void draw_segment_digit(int x, int y, int value)
     if (segments[value][6]) fill_rect(x + t,     y + h/2,   w, t); // mitte
 }
 
-void plant_clock_init(void)
-{
+void plant_clock_init(void){
     clock_set = false;
     edit_step = 0;
 
@@ -61,13 +59,11 @@ void plant_clock_init(void)
     last_update_us = esp_timer_get_time();
 }
 
-bool plant_clock_is_set(void)
-{
+bool plant_clock_is_set(void){
     return clock_set;
 }
 
-void plant_clock_draw_setup(void)
-{
+void plant_clock_draw_setup(void){
     display_clear();
 
     draw_segment_digit(15, 20, digit_h10);
@@ -96,8 +92,7 @@ void plant_clock_draw_setup(void)
     display_update();
 }
 
-void plant_clock_handle_input(void)
-{
+void plant_clock_handle_input(void){
     switch(button_event())
     {
         case BUTTON_CLICK:
@@ -127,8 +122,7 @@ void plant_clock_handle_input(void)
 
             edit_step++;
 
-            if(edit_step > 3)
-            {
+            if(edit_step > 3){
                 hour = digit_h10 * 10 + digit_h1;
                 minute = digit_m10 * 10 + digit_m1;
 
@@ -138,7 +132,7 @@ void plant_clock_handle_input(void)
                 clock_set = true;
 
                 last_update_us = esp_timer_get_time();
-            }
+                }
 
             break;
 
@@ -147,43 +141,36 @@ void plant_clock_handle_input(void)
     }
 }
 
-void plant_clock_update(void)
-{
+void plant_clock_update(void){
     if(!clock_set)
         return;
 
     int64_t now = esp_timer_get_time();
 
-    if(now - last_update_us >= 60000000)
-    {
+    if(now - last_update_us >= 60000000){
         minute++;
 
-        if(minute >= 60)
-        {
-            minute = 0;
-            hour++;
-        }
+            if(minute >= 60){
+                minute = 0;
+                hour++;
+                }
 
-        if(hour >= 24)
-        {
-            hour = 0;
-        }
+            if(hour >= 24){
+                hour = 0;
+                }
 
-        last_update_us += 60000000;
-    }
+            last_update_us += 60000000;
+        }
 }
 
-int plant_clock_get_hour(void)
-{
+int plant_clock_get_hour(void){
     return hour;
 }
 
-int plant_clock_get_minute(void)
-{
+int plant_clock_get_minute(void){
     return minute;
 }
 
-bool plant_clock_is_daytime(void)
-{
+bool plant_clock_is_daytime(void){
     return (hour >= 8 && hour < 20);
 }

@@ -3,6 +3,8 @@
 #include "buttons.h"
 #include "plant.h"
 
+/* für die Icons wurde KI zur Hilfe herangezogen */
+
 #define REQUIRED_HITS 4
 
 #define HEART_SCALE 3
@@ -21,9 +23,7 @@ static int hits = 0;
 static int success_ticks = 0;
 
 
-/*
- * Pixelherz
- */
+//Pixelherz mit Hilfe von KI erstellt
 static const int heart[6][7] =
 {
     {0,1,1,0,1,1,0},
@@ -35,8 +35,7 @@ static const int heart[6][7] =
 };
 
 
-static void draw_pixel_heart(int cx, int cy, int scale)
-{
+static void draw_pixel_heart(int cx, int cy, int scale){
     int w = 7 * scale;
     int h = 6 * scale;
 
@@ -61,8 +60,7 @@ static void draw_pixel_heart(int cx, int cy, int scale)
 }
 
 
-static const int heart_outline[6][7] =
-{
+static const int heart_outline[6][7] ={
     {0,1,1,0,1,1,0},
     {1,0,0,0,0,0,1},
     {1,0,0,0,0,0,1},
@@ -71,20 +69,17 @@ static const int heart_outline[6][7] =
     {0,0,0,1,0,0,0}
 };
 
-static void draw_pixel_heart_outline(int cx, int cy, int scale)
-{
+//Pixelherz mit Hilfe von KI erstellt
+static void draw_pixel_heart_outline(int cx, int cy, int scale){
     int w = 7 * scale;
     int h = 6 * scale;
 
     int start_x = cx - w / 2;
     int start_y = cy - h / 2;
 
-    for (int row = 0; row < 6; row++)
-    {
-        for (int col = 0; col < 7; col++)
-        {
-            if (heart_outline[row][col])
-            {
+    for (int row = 0; row < 6; row++){
+        for (int col = 0; col < 7; col++){
+            if (heart_outline[row][col]){
                 fill_rect(
                     start_x + col * scale,
                     start_y + row * scale,
@@ -96,14 +91,12 @@ static void draw_pixel_heart_outline(int cx, int cy, int scale)
     }
 }
 
-static void draw_heart_frame(int cx, int cy, int scale)
-{
+static void draw_heart_frame(int cx, int cy, int scale){
     draw_pixel_heart_outline(cx, cy, scale + 1);
 }
 
 
-static void draw_progress_bar(void)
-{
+static void draw_progress_bar(void){
     int x = 20;
     int y = 56;
     int w = 88;
@@ -113,8 +106,7 @@ static void draw_progress_bar(void)
 
     int fill_w = (w * hits) / REQUIRED_HITS;
 
-    if (fill_w > 0)
-    {
+    if (fill_w > 0){
         fill_rect(
             x + 1,
             y + 1,
@@ -125,11 +117,8 @@ static void draw_progress_bar(void)
 }
 
 
-/*
- * Erfolgsanimation
- */
-static void draw_success_animation(void)
-{
+//Erfolg darstellen
+static void draw_success_animation(void){
     display_clear();
 
     int radius = success_ticks * 3;
@@ -152,63 +141,42 @@ static void draw_success_animation(void)
 }
 
 
-void pet_game_start(void)
-{
+void pet_game_start(void){
     active = true;
     success = false;
-
     heart_x = -20;
     hits = 0;
-
     success_ticks = 0;
 }
 
 
-bool pet_game_is_active(void)
-{
+bool pet_game_is_active(void){
     return active;
 }
 
 
-void pet_game_update(plant_t *plant)
-{
-    /*
-     * Erfolgsphase
-     */
-    if (success)
-    {
-        success_ticks++;
+void pet_game_update(plant_t *plant){
+    //Streicheln erfolgreich
+    if (success){
+            success_ticks++;
 
-        if (success_ticks < 20)
-        {
-            draw_success_animation();
-        }
-        else
-        {
-            plant_draw(PLANT_LOVELY);
-        }
+            if (success_ticks < 20){
+                draw_success_animation();
+                }
+            else{
+                plant_draw(PLANT_LOVELY);
+                }
 
-        /*
-         * 50 Ticks bei 100 ms
-         * = 5 Sekunden
-         */
-        if (success_ticks >= 70)
-        {
-            active = false;
-            success = false;
+            if (success_ticks >= 70){
+                active = false;
+                success = false;
+                }
+            return;
         }
 
-        return;
-    }
-
-
-    /*
-     * Spiel zeichnen
-     */
+    // Spiel weiter zeichnen
     display_clear();
-
     draw_heart_frame(TARGET_X, 28, HEART_SCALE);
-
     draw_pixel_heart(
         heart_x,
         28,
@@ -216,48 +184,30 @@ void pet_game_update(plant_t *plant)
     );
 
     draw_progress_bar();
-
     display_update();
 
+    // Prüfen, ob Herz bei Klicken getroffen wurde
+    if (button_event() == BUTTON_CLICK){
+            if (heart_x >= TARGET_MIN_X && heart_x <= TARGET_MAX_X){
+                hits++;
+                }
 
-    /*
-     * Klick erkannt
-     */
-    if (button_event() == BUTTON_CLICK)
-    {
-        if (
-            heart_x >= TARGET_MIN_X &&
-            heart_x <= TARGET_MAX_X
-        )
-        {
-            hits++;
-        }
+            if (hits >= REQUIRED_HITS){
+                plant_add_happiness(plant, 50);
 
-        if (hits >= REQUIRED_HITS)
-        {
-            plant_add_happiness(plant, 50);
+                if (plant->happiness > 100){
+                    plant->happiness = 100;
+                    }
 
-            if (plant->happiness > 100)
-            {
-                plant->happiness = 100;
+                success = true;
+                success_ticks = 0;
+                return;
             }
-
-            success = true;
-            success_ticks = 0;
-            
-
-            return;
         }
-    }
 
-
-    /*
-     * Herz bewegen
-     */
+    //Herz bewegen
     heart_x += HEART_SPEED;
-
-    if (heart_x > 150)
-    {
+        if (heart_x > 150){
         heart_x = -20;
-    }
+        }
 }

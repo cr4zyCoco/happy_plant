@@ -3,6 +3,8 @@
 #include "esp_rom_sys.h"
 #include "driver/gpio.h"
 
+// -- aus Internetrecherche entnommen --
+
 #define TRIG_PIN GPIO_NUM_5
 #define ECHO_PIN GPIO_NUM_6
 
